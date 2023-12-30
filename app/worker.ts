@@ -3,6 +3,7 @@ import { ChatWindowMessage } from "@/schema/ChatWindowMessage";
 import { Voy as VoyClient } from "voy-search";
 
 import { WebPDFLoader } from "langchain/document_loaders/web/pdf";
+
 import { HuggingFaceTransformersEmbeddings } from "langchain/embeddings/hf_transformers";
 import { VoyVectorStore } from "langchain/vectorstores/voy";
 import { ChatOllama } from "langchain/chat_models/ollama";
@@ -28,7 +29,7 @@ const vectorstore = new VoyVectorStore(voyClient, embeddings);
 const ollama = new ChatOllama({
   baseUrl: "http://localhost:11435",
   temperature: 0.3,
-  model: "mistral",
+  model: "dolphin-phi",
 });
 
 const REPHRASE_QUESTION_TEMPLATE = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
@@ -59,7 +60,7 @@ const responseChainPrompt = ChatPromptTemplate.fromMessages<{
 }>([
   ["system", RESPONSE_SYSTEM_TEMPLATE],
   new MessagesPlaceholder("chat_history"),
-  ["user", `{question}`],
+  ["user", `{question}.`],
 ]);
 
 const formatDocs = (docs: Document[]) => {
@@ -100,6 +101,31 @@ const embedPDF = async (pdfBlob: Blob) => {
   });
 
   const splitDocs = await splitter.splitDocuments(docs);
+
+  self.postMessage({
+    type: "log",
+    data: splitDocs,
+  });
+
+  await vectorstore.addDocuments(splitDocs);
+};
+const embedJSON = async (textBlob: Blob) => {
+  const docs: { title: string; url: string; html: string }[] = JSON.parse(
+    await textBlob.text(),
+  );
+
+  const splitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 500,
+    chunkOverlap: 50,
+  });
+  const documents = docs.map(
+    (x,i) =>
+      new Document({
+        pageContent: "URL: " + x.url + " TITLE: "+x.title + " CONTENT: " + x.html,
+        metadata: { url: x.url, title: x.title,source:i.toString() },
+      }),
+  );
+  const splitDocs = await splitter.splitDocuments(documents);
 
   self.postMessage({
     type: "log",
@@ -192,6 +218,17 @@ self.addEventListener("message", async (event: any) => {
   if (event.data.pdf) {
     try {
       await embedPDF(event.data.pdf);
+    } catch (e: any) {
+      self.postMessage({
+        type: "error",
+        error: e.message,
+      });
+      throw e;
+    }
+  }
+ else if (event.data.json) {
+    try {
+      await embedJSON(event.data.json);
     } catch (e: any) {
       self.postMessage({
         type: "error",
