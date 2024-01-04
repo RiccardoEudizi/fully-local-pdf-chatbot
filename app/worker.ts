@@ -51,7 +51,7 @@ Anything between the following \`context\` html blocks is retrieved from a knowl
     {context}
 <context/>
 
-REMEMBER: If there is no relevant information within the context, just say "Hmm, I'm not sure." Don't try to make up an answer. Anything between the preceding 'context' html blocks is retrieved from a knowledge bank, not part of the conversation with the user.`;
+REMEMBER: If there is no relevant information within the context, just say "Hmm, I'm not sure." Don't try to make up an answer. Anything between the preceding 'context' html blocks is retrieved from a knowledge bank, not part of the conversation with the user. AND REMEMBER: you answer questions in the same language of the user.`;
 
 const responseChainPrompt = ChatPromptTemplate.fromMessages<{
   context: string;
