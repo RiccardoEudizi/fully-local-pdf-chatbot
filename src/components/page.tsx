@@ -4,8 +4,8 @@ export default function Home() {
   return (
     <ChatWindow
       emoji="🏠"
-      titleText="Fully Client-Side Chat Over Documents"
-      placeholder="Try asking something about the document you just uploaded!"
+      titleText="Fully Client-Side RAG Over Google results "
+      placeholder="Try asking something!"
     ></ChatWindow>
   );
 }
