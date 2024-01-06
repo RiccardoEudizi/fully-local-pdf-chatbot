@@ -1,13 +1,11 @@
-"use client";
-
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { useRef, useState, useEffect } from "react";
 import type { FormEvent } from "react";
 
-import { ChatMessageBubble } from "@/components/ChatMessageBubble";
-import { ChatWindowMessage } from "@/schema/ChatWindowMessage";
+import { ChatMessageBubble } from "../components/ChatMessageBubble";
+import type { ChatWindowMessage } from "../schema/ChatWindowMessage";
 
 export function ChatWindow(props: {
   placeholder?: string;
@@ -113,10 +111,10 @@ export function ChatWindow(props: {
     if (!worker.current) {
       // Create the worker if it does not yet exist.
       worker.current = new Worker(
-        new URL("../app/worker.ts", import.meta.url),
+        new URL("../pages/worker.ts", import.meta.url),
         {
           type: "module",
-        },
+        }
       );
       setIsLoading(false);
     }
@@ -156,26 +154,27 @@ export function ChatWindow(props: {
             `Embedding successful! Now try asking a question about your PDF.`,
             {
               theme: "dark",
-            },
+            }
           );
+          sendMessage(e);
           break;
       }
     };
     worker.current?.addEventListener("message", onMessageReceived);
   }
-  async function embedJSON(e: FormEvent<HTMLFormElement>) {
+  async function embedJSON(e: FormEvent<HTMLFormElement>, selPdf: File) {
     console.log(e);
-    console.log(selectedPDF);
+    console.log(selPdf);
     e.preventDefault();
     // const reader = new FileReader();
-    if (selectedPDF === null) {
+    if (selPdf === null) {
       toast(`You must select a file to embed.`, {
         theme: "dark",
       });
       return;
     }
     setIsLoading(true);
-    worker.current?.postMessage({ json: selectedPDF });
+    worker.current?.postMessage({ json: selPdf });
     const onMessageReceived = (e: any) => {
       switch (e.data.type) {
         case "log":
@@ -197,8 +196,9 @@ export function ChatWindow(props: {
             `Embedding successful! Now try asking a question about your JSON.`,
             {
               theme: "dark",
-            },
+            }
           );
+          sendMessage(e);
           break;
       }
     };
@@ -208,14 +208,20 @@ export function ChatWindow(props: {
   async function search(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const response = await fetch("/api/crawl?" + new URLSearchParams({input:input}).toString(),);
-    let blob = await response.blob();
-    console.log(blob);
-    
-    setSelectedPDF(new File([blob], blob.name));
-    await embedJSON(e);
+    if (messages.length === 0) {
+      const response = await fetch(
+        "/api/crawl.blob?" + new URLSearchParams({ input: input }).toString()
+      );
+      let blob = await response.blob();
+      console.log(blob);
+      setSelectedPDF(new File([blob], "query.json"));
 
-    await sendMessage(e);
+      await embedJSON(e, new File([blob], "query.json"));
+    }
+    else{
+      await sendMessage(e);
+
+    }
   }
 
   const choosePDFComponent = (

@@ -1,4 +1,4 @@
-import { ChatWindow } from "@/components/ChatWindow";
+import { ChatWindow } from "./ChatWindow";
 
 export default function Home() {
   return (

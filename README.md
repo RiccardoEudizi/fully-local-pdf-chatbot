@@ -1,45 +1,54 @@
-# 🏠 Fully Client-Side Chat Over Documents
+# Astro Starter Kit: Basics
 
-Yes, it's another chat over documents implementation... but this one is entirely local!
-
-![](/public/images/demo.gif)
-
-It's a Next.js app that read the content of an uploaded PDF, chunks it, adds it to a vector store, and
-performs RAG, all client side. You can even turn off your WiFi after the site loads!
-
-You can see a live version at https://webml-demo.vercel.app.
-
-Users will need to download and set up [Ollama](https://ollama.ai), then run the following commands to
-allow the site access to a locally running Mistral instance:
-
-```bash
-$ OLLAMA_ORIGINS=http://localhost:3000 OLLAMA_HOST=127.0.0.1:11435 ollama serve
-```
-Then, in another terminal window:
-
-```bash
-$ OLLAMA_HOST=127.0.0.1:11435 ollama pull mistral
+```sh
+npm create astro@latest -- --template basics
 ```
 
-## ⚡ Stack
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
+[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
 
-It uses the following:
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-- [Voy](https://github.com/tantaraio/voy) as the vector store, fully WASM in the browser.
-- [Ollama](https://ollama.ai/) to run an LLM locally and expose it to the web app.
-- [LangChain.js](https://js.langchain.com) to call the models, perform retrieval, and generally orchestrate all the pieces.
-- [Transformers.js](https://huggingface.co/docs/transformers.js/index) to run embeddings in the browser.
+![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
 
-I wanted to run as much of the app as possible directly in the browser, but you can swap in [Ollama embeddings](https://js.langchain.com/docs/modules/data_connection/text_embedding/integrations/ollama) as well.
+## 🚀 Project Structure
 
-## 🔱 Forking
+Inside of your Astro project, you'll see the following folders and files:
 
-To run/deploy this yourself, simply fork this repo and install the required dependencies with `yarn`.
+```text
+/
+├── public/
+│   └── favicon.svg
+├── src/
+│   ├── components/
+│   │   └── Card.astro
+│   ├── layouts/
+│   │   └── Layout.astro
+│   └── pages/
+│       └── index.astro
+└── package.json
+```
 
-There are no required environment variables!
+Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
 
-## 🙏 Thank you!
+There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
 
-Special thanks to [@dawchihliou](https://twitter.com/dawchihliou) for making Voy, [@jmorgan](https://twitter.com/jmorgan) and [@mchiang0610](https://twitter.com/mchiang0610) for making Ollama and for your feedback, and [@xenovacom](https://twitter.com/xenovacom) for making Transformers.js.
+Any static assets, like images, can be placed in the `public/` directory.
 
-For more, follow me on Twitter [@Hacubu](https://x.com/hacubu)!
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
